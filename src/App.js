@@ -13,6 +13,7 @@ function App() {
 
         <Route path='/signin' element={<Signin />} />
         <Route path='/signup' element={<Signup />} />
+        <Route path='/' element={<Home />} />
         <Route element={<RequireAuth />}>
 
           {/* <Route element={<RequireRole allowedRoles={["ADMIN"]} />}>

@@ -1,8 +1,12 @@
+import ProductCard from 'components/productcard/ProductCard'
 import React from 'react'
 
 function Home() {
     return (
-        <div>Home</div>
+        <>
+            <div>Home</div>
+            <ProductCard />
+        </>
     )
 }
 
