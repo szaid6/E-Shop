@@ -14,6 +14,7 @@ import axios from 'api/axios';
 import { setLogin } from 'state/AppState';
 import { useDispatch } from 'react-redux';
 import { Token } from '@mui/icons-material';
+import Navbar from 'components/navbarauth/Navbar';
 
 const Signin = () => {
 
@@ -45,13 +46,14 @@ const Signin = () => {
   //   }
   // }, [loggedInUser, from, history]);
 
+
   let submitForm = async (data) => {
     console.log("Login data: ", data);
 
     // Call API to login using axios
     const response = await axios.post("/auth/signin", data);
 
-    dispatch(setLogin({ token: response.data.token, email: data.username }));
+    dispatch(setLogin({ token: response.data.token, email: data.email }));
 
     history("/", { replace: true });
   };
@@ -153,85 +155,95 @@ const Signin = () => {
   };
   if (loggedInUser === null) {
     return (
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={1}>
-          <Grid container item spacing={3}>
-            <Grid item xs={4} />
-            <Grid item xs={4}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: "10%" }}>
-                <LockOutlinedIcon style={{
-                  display: 'inline-block',
-                  borderRadius: '60px',
-                  padding: '0.6em 0.6em',
-                  color: '#ffffff',
-                  background: "#f50057"
-                }} />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Typography
-                  variant="subtitle1"
-                  noWrap
-                  sx={{
-                    fontSize: "25px",
-                    color: 'inherit',
-                  }}
-                >
-                  Sign in
-                </Typography>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
-                <TextField id="username"
-                  label="Email Address *"
-                  variant="outlined"
-                  fullWidth
-                  type="email"
-                  value={formData.username.value}
-                  onChange={(event) => saveOnFieldChange("username", event.target.value)}
-                  onBlur={(event) => validateAndSaveLoginData("username", event.target.value)}
-                  error={formData.username.error}
-                  helperText={formData.username.error && formData.username.errorMessage}
-                />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
-                <TextField id="password"
-                  label="Password *"
-                  variant="outlined"
-                  fullWidth
-                  type="password"
-                  value={formData.password.value}
-                  onChange={(event) => saveOnFieldChange("password", event.target.value)}
-                  onBlur={(event) => validateAndSaveLoginData("password", event.target.value)}
-                  error={formData.password.error}
-                  helperText={formData.password.error && formData.password.errorMessage}
-                />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
-                <Button variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={validateAndLoginData}
-                >
-                  SIGN IN
-                </Button>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'left', marginTop: "30px" }}>
-                <Link to="/signup">
-                  <Typography variant="body1">
-                    Don't have an account? Sign Up
+      <>
+        <Navbar />
+
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={1}>
+            <Grid container item spacing={3}>
+              <Grid item xs={4} />
+              <Grid item xs={4}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: "10%", }}>
+                  <span
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderRadius: '60px',
+                      color: '#ffffff',
+                      background: "#f50057",
+                      padding: "8px"
+                    }}
+                  >
+                    <LockOutlinedIcon />
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Typography
+                    variant="subtitle1"
+                    noWrap
+                    sx={{
+                      fontSize: "25px",
+                      color: 'inherit',
+                    }}
+                  >
+                    Sign in
                   </Typography>
-                </Link>
-              </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
+                  <TextField id="username"
+                    label="Email Address *"
+                    variant="outlined"
+                    fullWidth
+                    type="email"
+                    value={formData.username.value}
+                    onChange={(event) => saveOnFieldChange("username", event.target.value)}
+                    onBlur={(event) => validateAndSaveLoginData("username", event.target.value)}
+                    error={formData.username.error}
+                    helperText={formData.username.error && formData.username.errorMessage}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
+                  <TextField id="password"
+                    label="Password *"
+                    variant="outlined"
+                    fullWidth
+                    type="password"
+                    value={formData.password.value}
+                    onChange={(event) => saveOnFieldChange("password", event.target.value)}
+                    onBlur={(event) => validateAndSaveLoginData("password", event.target.value)}
+                    error={formData.password.error}
+                    helperText={formData.password.error && formData.password.errorMessage}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
+                  <Button variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={validateAndLoginData}
+                  >
+                    SIGN IN
+                  </Button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'left', marginTop: "30px" }}>
+                  <Link to="/signup">
+                    <Typography variant="body1">
+                      Don't have an account? Sign Up
+                    </Typography>
+                  </Link>
+                </div>
+              </Grid>
+              <Grid item xs={4} />
             </Grid>
-            <Grid item xs={4} />
           </Grid>
-        </Grid>
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={busy}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </Box>
+          <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={busy}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        </Box>
+      </>
     );
   } else {
     return (
