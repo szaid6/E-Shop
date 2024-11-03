@@ -10,8 +10,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from "@mui/material/Backdrop";
 import { useState, useEffect } from "react";
 import { Navigate, useNavigate, useLocation } from "react-router-dom";
+import axios from 'api/axios';
+import { setLogin } from 'state/AppState';
+import { useDispatch } from 'react-redux';
+import { Token } from '@mui/icons-material';
 
 const Signin = () => {
+
+  const dispatch = useDispatch();
 
   let initialState = {
     username: {
@@ -30,14 +36,25 @@ const Signin = () => {
   const [busy, setBusy] = useState(false);
   const history = useNavigate();
   const location = useLocation();
-  const { from } = (location && location.state) || { from: { pathname: "/home" } };
+  const { from } = (location && location.state) || { from: { pathname: "/" } };
   const [loggedInUser, setLoggedInUser] = useState(null);
 
-  useEffect(() => {
-    if (loggedInUser) {
-      history(from, { replace: true });
-    }
-  }, [loggedInUser, from, history]);
+  // useEffect(() => {
+  //   if (loggedInUser) {
+  //     history(from, { replace: true });
+  //   }
+  // }, [loggedInUser, from, history]);
+
+  let submitForm = async (data) => {
+    console.log("Login data: ", data);
+
+    // Call API to login using axios
+    const response = await axios.post("/auth/signin", data);
+
+    dispatch(setLogin({ token: response.data.token, email: data.username }));
+
+    history("/", { replace: true });
+  };
 
   let validateAndLoginData = () => {
     setBusy(true);
@@ -61,6 +78,9 @@ const Signin = () => {
     setFormData(data);
     if (validDetails) {
       // Login function here
+
+      submitForm(requestJson);
+
       setLoggedInUser(requestJson); // Mock login success
       setBusy(false);
     } else {
@@ -215,7 +235,7 @@ const Signin = () => {
     );
   } else {
     return (
-      <Navigate to="/home" />
+      <Navigate to="/" />
     );
   }
 }
