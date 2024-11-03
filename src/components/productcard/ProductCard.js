@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardActions from '@mui/material/CardActions';
 import { Box } from '@mui/material';
+import { Delete, Edit } from '@mui/icons-material';
 
 const ProductCard = ({
     imageUrl = "https://via.placeholder.com/150",
@@ -42,10 +43,24 @@ const ProductCard = ({
                     </Typography>
                 </CardContent>
             </CardActionArea>
-            <CardActions>
+            <CardActions sx={{ justifyContent: 'space-between' }}>
                 <Button variant='contained' size="small" color="primary">
                     Buy
                 </Button>
+                <Box display="flex" gap={'12px'} justifyContent="space-between" alignItems="center">
+                    {/* Edit */}
+                    <span>
+                        <Edit
+                            sx={{ color: '#757575' }}
+                        />
+                    </span>
+                    {/* delete */}
+                    <span>
+                        <Delete
+                            sx={{ color: '#757575' }}
+                        />
+                    </span>
+                </Box>
             </CardActions>
         </Card>
     );
