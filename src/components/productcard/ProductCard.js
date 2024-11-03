@@ -9,20 +9,15 @@ import CardActions from '@mui/material/CardActions';
 import { Box } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 
-const ProductCard = ({
-    imageUrl = "https://via.placeholder.com/150",
-    name = "Default Product Name dawda wadw awd",
-    price = 1000,
-    description = "This is a default product description."
-}) => {
+const ProductCard = ({ data }) => {
     return (
-        <Card sx={{ maxWidth: 345 }}>
+        <Card sx={{ width: 300, marginBottom: '1rem' }}>
             <CardActionArea>
                 <CardMedia
                     component="img"
                     height="200"
-                    image={imageUrl}
-                    alt="green iguana"
+                    image={data.imageUrl}
+                    alt={data.name}
                 />
                 <CardContent>
                     <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -32,14 +27,14 @@ const ProductCard = ({
                             textOverflow: 'ellipsis',
                             maxWidth: '70%' // Adjust this as needed
                         }}>
-                            {name}
+                            {data.name}
                         </Typography>
                         <Typography gutterBottom variant="h6" color="text.primary">
-                            ₹{price}
+                            ₹{data.price}
                         </Typography>
                     </Box>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        {description}
+                        {data.description}
                     </Typography>
                 </CardContent>
             </CardActionArea>
