@@ -12,7 +12,7 @@ const RequireAuth = () => {
 
 
     if (!auth || !auth.token) {
-        return <Navigate to="/signin" state={{ from: location }} replace />;
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     const payloadToken = jwtDecode(auth.token);
@@ -24,7 +24,7 @@ const RequireAuth = () => {
 
     } else {
         dispatch(setLogout());
-        return <Navigate to="/signin" state={{ from: location }} replace />;
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 };
 
