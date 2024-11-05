@@ -5,6 +5,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import axios from 'api/axios';
 import ProductCard from 'components/productcard/ProductCard';
 import Select from 'react-select';
+import { useNavigate } from 'react-router-dom';
 
 const Product = () => {
     const [categories, setCategories] = useState([]);
@@ -12,6 +13,7 @@ const Product = () => {
     const [products, setProducts] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [selectedSort, setSelectedSort] = useState('default');
+    const navigate = useNavigate();
 
     // Fetch categories from the API
     const getCategories = async () => {
@@ -86,6 +88,10 @@ const Product = () => {
         setFilteredData(sortedData);
     };
 
+    const handleBuyClick = () => {
+        navigate('/order');
+    };
+
     const options = [
         { value: 'default', label: 'Default' },
         { value: 'highToLow', label: 'Price: High to Low' },
@@ -121,7 +127,7 @@ const Product = () => {
 
             <div className="productContainer">
                 {filteredData.map((product, index) => (
-                    <ProductCard data={product} key={index} />
+                    <ProductCard data={product} key={index} onBuyClick={handleBuyClick} />
                 ))}
             </div>
 
