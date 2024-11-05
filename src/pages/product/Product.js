@@ -88,10 +88,7 @@ const Product = () => {
         setFilteredData(sortedData);
     };
 
-    const handleBuyClick = () => {
-        navigate('/order');
-    };
-
+    
     const options = [
         { value: 'default', label: 'Default' },
         { value: 'highToLow', label: 'Price: High to Low' },
@@ -127,7 +124,7 @@ const Product = () => {
 
             <div className="productContainer">
                 {filteredData.map((product, index) => (
-                    <ProductCard data={product} key={index} onBuyClick={handleBuyClick} />
+                    <ProductCard data={product} key={index}  />
                 ))}
             </div>
 

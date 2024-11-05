@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import './Productdetail.css'
 import { Box, Button, TextField, Typography } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'api/axios';
 
 const Productdetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [product, setProduct] = useState(null);
+    const navigate = useNavigate();
 
     // get id from the URL
     const { productId } = useParams();
@@ -33,7 +34,8 @@ const Productdetail = () => {
     };
 
     const handlePlaceOrder = () => {
-        alert(`Order placed for ${quantity} item(s)!`);
+        navigate('/order');
+
     };
 
     return (
