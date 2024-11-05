@@ -35,10 +35,10 @@ const Order = () => {
 
   const handleFieldChange = (field, value) => {
     const { valid, message } = validateField(field, value);
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [field]: { value, error: !valid, errorMessage: message },
-    });
+    }));
   };
 
   const validateField = (field, value) => {
@@ -55,8 +55,8 @@ const Order = () => {
           message = valid ? null : 'Please enter a valid 10-digit contact number.';
           break;
         case 'zipCode':
-          valid = /^\d{5}$/.test(value);
-          message = valid ? null : 'Please enter a valid 5-digit zip code.';
+          valid = /^\d{6}$/.test(value);
+          message = valid ? null : 'Please enter a valid 6-digit zip code.';
           break;
         default:
           break;
@@ -66,22 +66,33 @@ const Order = () => {
     return { valid, message };
   };
 
-  const handleSaveAddress = () => {
-    let validForm = true;
-    const data = {};
+  const validateForm = () => {
+    let updatedFormData = { ...formData };
+    let isFormValid = true;
 
-    for (let field in formData) {
-      const { value, error } = formData[field];
-      if (error || value === '') {
-        validForm = false;
-        handleFieldChange(field, value);
-      } else {
-        data[field] = value;
+    Object.keys(formData).forEach((field) => {
+      const { value } = formData[field];
+      const { valid, message } = validateField(field, value);
+
+      if (!valid) {
+        isFormValid = false;
       }
-    }
 
-    if (validForm) {
-      console.log('Address saved:', data);
+      updatedFormData[field] = {
+        ...formData[field],
+        error: !valid,
+        errorMessage: message,
+      };
+    });
+
+    setFormData(updatedFormData);
+    return isFormValid;
+  };
+
+  const handleSaveAddress = () => {
+    if (validateForm()) {
+      alert("Form submitted successfully!");
+      // Proceed with form submission logic here
     }
   };
 
@@ -101,12 +112,12 @@ const Order = () => {
   ];
 
   return (
-    <Box display={'flex'} flexDirection={'row'} justifyContent={'center'} width={'100%'} bgcolor={'#fafafa'} height={'90vh'} >
+    <Box display={'flex'} flexDirection={'row'} justifyContent={'center'} width={'100%'} bgcolor={'#fafafa'} height={'100%'} >
       <Box sx={{ width: '70%' }} marginTop={'3rem'} >
         <Stepper activeStep={activeStep} style={{ backgroundColor: '#fff', padding: '1.5rem' }}>
           {steps.map((label, index) => (
-            <Step key={label} completed={completed.has(index)}>
-              <StepLabel>{label}</StepLabel>
+            <Step key={label} completed={completed.has(index)} >
+              <StepLabel >{label}</StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -205,10 +216,9 @@ const Order = () => {
                   />
                   <Button
                     variant="contained"
-                    color="primary"
                     fullWidth
                     onClick={handleSaveAddress}
-                    style={{ marginTop: '1rem' }}
+                    style={{ marginTop: '1rem', backgroundColor: '#3f51b5' }}
                   >
                     Save Address
                   </Button>
