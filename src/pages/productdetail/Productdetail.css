@@ -1,0 +1,62 @@
+.page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90vh;
+}
+
+.product-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    margin: auto;
+}
+
+.product-image {
+    width: 400px;
+    margin-right: 6rem;
+    border-radius: 8px;
+}
+
+.product-details {
+    flex: 1;
+}
+
+.product-details h2 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.quantity-badge {
+    background-color: #4050b5;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    margin-left: 10px;
+}
+
+.category {
+    color: #333;
+    font-weight: 500;
+    margin: 10px 0;
+}
+
+.description {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 20px 0;
+}
+
+.price {
+    color: red;
+    font-size: 1.25rem;
+    margin: 20px 0;
+}
+
+.order-section {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+}
