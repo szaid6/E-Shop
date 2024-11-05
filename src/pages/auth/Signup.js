@@ -3,6 +3,10 @@ import { TextField, Button, Typography, Box, Grid, CircularProgress, Backdrop } 
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'api/axios';
 import Navbar from 'components/navbarauth/Navbar';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Bounce } from 'react-toastify';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -77,7 +81,19 @@ const Signup = () => {
         await axios.post('/auth/signup', data);
         navigate('/login');
       } catch (error) {
-        console.error('Signup error:', error);
+        // Toastify error message
+        toast.error(error.response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        // console.error(error.response.data.message);
       }
     }
 
@@ -86,13 +102,29 @@ const Signup = () => {
 
   return (
     <>
+      <ToastContainer/>
       <Navbar />
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={1}>
           <Grid container item spacing={3}>
             <Grid item xs={4} />
             <Grid item xs={4}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10%' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: "10%", }}>
+                <span
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '60px',
+                    color: '#ffffff',
+                    background: "#f50057",
+                    padding: "8px"
+                  }}
+                >
+                  <LockOutlinedIcon />
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
                 <Typography variant="h5">Sign Up</Typography>
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
