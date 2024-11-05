@@ -8,8 +8,6 @@ function Home() {
 
     return (
         <>
-            <div>{auth.email}</div>
-            <ProductCard />
         </>
     )
 }
