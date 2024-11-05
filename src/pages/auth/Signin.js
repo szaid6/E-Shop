@@ -15,6 +15,10 @@ import { setLogin } from 'state/AppState';
 import { useDispatch } from 'react-redux';
 import { Token } from '@mui/icons-material';
 import Navbar from 'components/navbarauth/Navbar';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Bounce } from 'react-toastify';
+
 
 const Signin = () => {
 
@@ -48,14 +52,28 @@ const Signin = () => {
 
 
   let submitForm = async (data) => {
-    console.log("Login data: ", data);
-
     // Call API to login using axios
-    const response = await axios.post("/auth/signin", data);
-
-    dispatch(setLogin({ token: response.data.token, email: data.email }));
-
-    history("/", { replace: true });
+    try {
+      const response = await axios.post("/auth/signin", data);
+      dispatch(setLogin({ token: response.data.token, email: data.email }));
+      history("/", { replace: true });
+      console.log('ravi changed priorities');
+    } catch (error) {
+      if (error.status === 401) {
+        toast.error("Invalid username or password", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
+      console.error(error);
+    }
   };
 
   let validateAndLoginData = () => {
@@ -83,7 +101,7 @@ const Signin = () => {
 
       submitForm(requestJson);
 
-      setLoggedInUser(requestJson); // Mock login success
+      // setLoggedInUser(requestJson); // Mock login success
       setBusy(false);
     } else {
       setBusy(false);
@@ -153,103 +171,99 @@ const Signin = () => {
       }
     });
   };
-  if (loggedInUser === null) {
-    return (
-      <>
-        <Navbar />
+  return (
+    <>
+      <Navbar />
+      <ToastContainer />
 
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={1}>
-            <Grid container item spacing={3}>
-              <Grid item xs={4} />
-              <Grid item xs={4}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: "10%", }}>
-                  <span
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: '60px',
-                      color: '#ffffff',
-                      background: "#f50057",
-                      padding: "8px"
-                    }}
-                  >
-                    <LockOutlinedIcon />
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <Typography
-                    variant="subtitle1"
-                    noWrap
-                    sx={{
-                      fontSize: "25px",
-                      color: 'inherit',
-                    }}
-                  >
-                    Sign in
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={1}>
+          <Grid container item spacing={3}>
+            <Grid item xs={4} />
+            <Grid item xs={4}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: "10%", }}>
+                <span
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '60px',
+                    color: '#ffffff',
+                    background: "#f50057",
+                    padding: "8px"
+                  }}
+                >
+                  <LockOutlinedIcon />
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                <Typography
+                  variant="subtitle1"
+                  noWrap
+                  sx={{
+                    fontSize: "25px",
+                    color: 'inherit',
+                  }}
+                >
+                  Sign in
+                </Typography>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
+                <TextField id="username"
+                  label="Email Address *"
+                  variant="outlined"
+                  fullWidth
+                  type="email"
+                  value={formData.username.value}
+                  onChange={(event) => saveOnFieldChange("username", event.target.value)}
+                  onBlur={(event) => validateAndSaveLoginData("username", event.target.value)}
+                  error={formData.username.error}
+                  helperText={formData.username.error && formData.username.errorMessage}
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
+                <TextField id="password"
+                  label="Password *"
+                  variant="outlined"
+                  fullWidth
+                  type="password"
+                  value={formData.password.value}
+                  onChange={(event) => saveOnFieldChange("password", event.target.value)}
+                  onBlur={(event) => validateAndSaveLoginData("password", event.target.value)}
+                  error={formData.password.error}
+                  helperText={formData.password.error && formData.password.errorMessage}
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
+                <Button variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={validateAndLoginData}
+                >
+                  SIGN IN
+                </Button>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'left', marginTop: "30px" }}>
+                <Link to="/signup">
+                  <Typography variant="body1">
+                    Don't have an account? Sign Up
                   </Typography>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
-                  <TextField id="username"
-                    label="Email Address *"
-                    variant="outlined"
-                    fullWidth
-                    type="email"
-                    value={formData.username.value}
-                    onChange={(event) => saveOnFieldChange("username", event.target.value)}
-                    onBlur={(event) => validateAndSaveLoginData("username", event.target.value)}
-                    error={formData.username.error}
-                    helperText={formData.username.error && formData.username.errorMessage}
-                  />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
-                  <TextField id="password"
-                    label="Password *"
-                    variant="outlined"
-                    fullWidth
-                    type="password"
-                    value={formData.password.value}
-                    onChange={(event) => saveOnFieldChange("password", event.target.value)}
-                    onBlur={(event) => validateAndSaveLoginData("password", event.target.value)}
-                    error={formData.password.error}
-                    helperText={formData.password.error && formData.password.errorMessage}
-                  />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: "30px" }}>
-                  <Button variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={validateAndLoginData}
-                  >
-                    SIGN IN
-                  </Button>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'left', marginTop: "30px" }}>
-                  <Link to="/signup">
-                    <Typography variant="body1">
-                      Don't have an account? Sign Up
-                    </Typography>
-                  </Link>
-                </div>
-              </Grid>
-              <Grid item xs={4} />
+                </Link>
+              </div>
             </Grid>
+            <Grid item xs={4} />
           </Grid>
-          <Backdrop
-            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open={busy}
-          >
-            <CircularProgress color="inherit" />
-          </Backdrop>
-        </Box>
-      </>
-    );
-  } else {
-    return (
-      <Navigate to="/" />
-    );
-  }
+        </Grid>
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={busy}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </Box>
+    </>
+  );
+
 }
 
 export default Signin

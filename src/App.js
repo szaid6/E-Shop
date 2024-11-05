@@ -7,6 +7,7 @@ import Product from './pages/product/Product';
 import RequireAuth from './middleware/RequireAuth';
 import Signin from './pages/auth/Signin';
 import Signup from './pages/auth/Signup';
+import Productdetail from 'pages/productdetail/Productdetail';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route element={<Layout />} >
           <Route path='/' element={<Home />} />
           <Route path='/products' element={<Product />} />
+          <Route path='/productdetail/:productId' element={<Productdetail />} />
         </Route>
         <Route element={<RequireAuth />}>
 

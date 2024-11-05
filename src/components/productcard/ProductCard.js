@@ -8,8 +8,17 @@ import CardActionArea from '@mui/material/CardActionArea';
 import CardActions from '@mui/material/CardActions';
 import { Box } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
+import { move } from 'formik';
+import { Navigate, useHistory, useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ data }) => {
+    const navigate = useNavigate();
+    const moveToDetailPage = (productId) => {
+        // navigate to product detail page with the product id
+        navigate(`/productdetail/${productId}`, { replace: false });
+    }
+
+
     return (
         <Card sx={{ width: 300, marginBottom: '1rem' }}>
             <CardActionArea>
@@ -39,7 +48,9 @@ const ProductCard = ({ data }) => {
                 </CardContent>
             </CardActionArea>
             <CardActions sx={{ justifyContent: 'space-between' }}>
-                <Button variant='contained' size="small" color="primary">
+                <Button variant='contained' size="small" color="primary"
+                    onClick={() => moveToDetailPage(data.id)}
+                >
                     Buy
                 </Button>
                 <Box display="flex" gap={'12px'} justifyContent="space-between" alignItems="center">
