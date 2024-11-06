@@ -34,7 +34,7 @@ const Productdetail = () => {
     };
 
     const handlePlaceOrder = () => {
-        navigate('/order');
+        navigate(`/order/${productId}`);
 
     };
 
@@ -42,7 +42,7 @@ const Productdetail = () => {
         <div className="page">
             <div className="product-card">
                 <img
-                    src="https://www.soundandvision.com.mt/wp-content/uploads/2024/02/Samsung-Galaxy-S24-ULTRA-BLACK.jpg" // Replace with actual image URL
+                    src={product?.image || 'https://via.placeholder.com/150'}
                     alt={product?.name}
                     className="product-image"
                 />

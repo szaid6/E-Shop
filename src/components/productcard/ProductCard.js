@@ -29,12 +29,12 @@ const ProductCard = ({ data, onDelete, onEdit }) => {
     };
 
     return (
-        <Card sx={{ width: 300, marginBottom: '1rem' }}>
+        <Card sx={{ width: 300, marginBottom: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <CardActionArea>
                 <CardMedia
                     component="img"
                     height="200"
-                    image={data.imageUrl}
+                    image={data?.image || 'https://via.placeholder.com/150'}
                     alt={data.name}
                 />
                 <CardContent>
@@ -51,7 +51,7 @@ const ProductCard = ({ data, onDelete, onEdit }) => {
                             ₹{data.price}
                         </Typography>
                     </Box>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }} style={{ maxHeight: '120px', overflow: 'auto' }}>
                         {data.description}
                     </Typography>
                 </CardContent>

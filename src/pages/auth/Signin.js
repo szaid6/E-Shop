@@ -43,14 +43,6 @@ const Signin = () => {
   const { from } = (location && location.state) || { from: { pathname: "/" } };
   const [loggedInUser, setLoggedInUser] = useState(null);
 
-
-  // useEffect(() => {
-  //   if (loggedInUser) {
-  //     history(from, { replace: true });
-  //   }
-  // }, [loggedInUser, from, history]);
-
-
   let submitForm = async (data) => {
     // Call API to login using axios
     try {
@@ -63,11 +55,11 @@ const Signin = () => {
             Authorization: `Bearer ${response.data.token}`
           }
         });
-        dispatch(setLogin({ token: response.data.token, email: data.email, isAdmin: true }));
+        dispatch(setLogin({ token: response.data.token, email: data.username, isAdmin: true,userId:response.data.id  }));
 
       } catch (error) {
         console.error(error);
-        dispatch(setLogin({ token: response.data.token, email: data.email, isAdmin: false }));
+        dispatch(setLogin({ token: response.data.token, email: data.username, isAdmin: false,userId:response.data.id }));
       }
 
       toast.success("Login successful", {

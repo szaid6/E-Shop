@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Stepper, Step, StepLabel, Button, Typography, Box, TextField } from '@mui/material';
-import Select from 'react-select';
-
+import Select from '@mui/material/Select';
+import axios,{ PrivateComponent } from 'api/axios';
+import MenuItem from '@mui/material/MenuItem';
+import useAuth from 'hooks/useAuth';
+import ConfirmOrder from './ConfirmOrder'
+import { useParams } from 'react-router-dom';
 const steps = ['Items', 'Select Address', 'Confirm Order'];
 
+
+
 const Order = () => {
+  const { productId } = useParams();
+ 
+  const privateAxios = PrivateComponent();
+  const { auth } = useAuth();
   const [activeStep, setActiveStep] = useState(1);
   const [completed, setCompleted] = useState(new Set([0]));
   const [formData, setFormData] = useState({
@@ -89,27 +99,78 @@ const Order = () => {
     return isFormValid;
   };
 
-  const handleSaveAddress = () => {
+  const handleSaveAddress = async () => {
     if (validateForm()) {
-      alert("Form submitted successfully!");
-      // Proceed with form submission logic here
+      try {
+
+        const payload = {
+
+          name: formData.name.value,
+          contactNumber: formData.contactNumber.value,
+          street: formData.street.value,
+          city: formData.city.value,
+          state: formData.state.value,
+          landmark: formData.landmark.value,
+          zipcode: formData.zipCode.value,
+          user: auth.userId
+        }
+
+
+
+        const res = await privateAxios.post("/addresses", payload);
+        const { data } = res;
+        await getAddresses();
+        alert("address added select it from the dropdown")
+
+
+
+
+      } catch (error) {
+        alert("erorr adding address")
+      }
+
+
     }
   };
 
-  const address = [
-    {
-      'id': 1,
-      'address': 'address 1'
-    },
-    {
-      'id': 2,
-      'address': 'address 2'
-    },
-    {
-      'id': 3,
-      'address': 'address 3'
+  const [selectedAddressDetails, setSelectedAddressDetails] = useState({})
+  const [product,setProduct]=useState({});
+  const [selectedAddress, setSelectedAddress] = useState("-1")
+  const [address, setAddress] = useState([]);
+
+  const getAddresses = async () => {
+    try {
+      const res = await privateAxios.get("/addresses");
+      const { data } = res;
+      setAddress(data);
+
+    } catch (error) {
+      alert("error getting Address Data")
     }
-  ];
+  }
+
+  const getProductDetails = async () => {
+    // Call API to get product details using axios
+    try {
+        const response = await axios.get(`/products/${productId}`);
+        
+        setProduct(response.data);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+  useEffect(() => {
+    getAddresses();
+    getProductDetails();
+  }, [])
+
+  useEffect(() => {
+    setSelectedAddressDetails(address.find((add) => add.id === selectedAddress))
+
+  }, [selectedAddress])
+
+
 
   return (
     <Box display={'flex'} flexDirection={'row'} justifyContent={'center'} width={'100%'} bgcolor={'#fafafa'} height={'100%'} >
@@ -128,11 +189,22 @@ const Order = () => {
                 <div style={{ width: '500px', marginTop: '1rem' }}>
                   <label>Select Address</label>
                   <Select
-                    options={address.map((address) => ({ value: address.id, label: address.address }))}
+                    // options={[{ value: 0, label: "Select An Adress" }, ...address].map((address) => ({ value: address.id, label: address.address }))}
                     placeholder="Select..."
-                    // onChange={handleSorting}
-                    value='default'
-                  />
+                    onChange={(e) => setSelectedAddress(e.target.value)}
+                    value={selectedAddress}
+                    style={{ width: "100%" }}
+                  >
+                    <MenuItem value="-1">Select An Address</MenuItem>
+                    {
+                      address.map((add) => {
+                        return (
+                          <MenuItem value={add.id}>{add.name},{add.street},{add.landmark},{add.city},{add.state},{add.zipcode}</MenuItem>
+                        )
+                      })
+                    }
+
+                  </Select>
                 </div>
 
                 <Typography variant="h6" align="center" marginTop={'1rem'}>
@@ -219,6 +291,7 @@ const Order = () => {
                     fullWidth
                     onClick={handleSaveAddress}
                     style={{ marginTop: '1rem', backgroundColor: '#3f51b5' }}
+                    disabled={selectedAddress === "-1" ? false : true}
                   >
                     Save Address
                   </Button>
@@ -226,9 +299,7 @@ const Order = () => {
               </Box>
             )}
             {activeStep === 2 && (
-              <Typography variant="h6" align="center">
-                Confirm Order
-              </Typography>
+              <ConfirmOrder address={selectedAddressDetails} order={product} />
             )}
             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
               <Button

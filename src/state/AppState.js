@@ -4,7 +4,8 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
     token: "",
     email: "",
-    isAdmin: false
+    isAdmin: false,
+    userId:""
 }
 
 export const AppSlice = createSlice({
@@ -15,11 +16,13 @@ export const AppSlice = createSlice({
             state.token = action.payload.token;
             state.email = action.payload.email;
             state.isAdmin = action.payload.isAdmin;
+            state.userId = action.payload.userId;
         },
         setLogout: (state) => {
             state.token = null;
             state.email = null;
-            state.isAdmin = false;
+            state.isAdmin = null;
+            state.userId = null;
         },
 
         //    other reducers

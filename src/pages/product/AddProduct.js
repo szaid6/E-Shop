@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import CreatableSelect from 'react-select/creatable';
-import axios from 'api/axios';
+import axios, { PrivateComponent } from 'api/axios';
+import { Bounce, toast, Toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +18,8 @@ const AddProduct = () => {
 
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
+  const privateAxios = PrivateComponent();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -61,99 +65,127 @@ const AddProduct = () => {
     if (!validateForm()) return;
 
     try {
-      await axios.post('/products', formData);
-      alert('Product added successfully');
+      await privateAxios.post('/products', formData);
+      toast.success("Product Added Succesfully", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      // Clear form data
+      setFormData({
+        name: '',
+        category: '',
+        manufacturer: '',
+        availableItems: '',
+        price: '',
+        imageUrl: '',
+        description: '',
+      });
+
+      // navigate to products page
+      navigate(`/products`, { replace: false });
+
     } catch (error) {
       console.error('Error adding product:', error);
     }
   };
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="100%" maxWidth="500px" margin="auto" marginTop="2rem">
-      <Typography variant="h4" marginBottom="2rem">Add Product</Typography>
-      <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-        <TextField
-          label="Name *"
-          name="name"
-          variant="outlined"
-          fullWidth
-          value={formData.name}
-          onChange={handleInputChange}
-          error={!!errors.name}
-          helperText={errors.name}
-          margin="normal"
-        />
-        <CreatableSelect
-          isClearable
-          options={categories}
-          onChange={handleCategoryChange}
-          placeholder="Category *"
-          value={categories.find(option => option.value === formData.category)}
-          styles={{
-            control: (base) => ({
-              ...base,
-              marginTop: '16px',
-              marginBottom: '8px',
-            }),
-          }}
-        />
-        {errors.category && <Typography color="error" variant="body2">{errors.category}</Typography>}
-        <TextField
-          label="Manufacturer *"
-          name="manufacturer"
-          variant="outlined"
-          fullWidth
-          value={formData.manufacturer}
-          onChange={handleInputChange}
-          error={!!errors.manufacturer}
-          helperText={errors.manufacturer}
-          margin="normal"
-        />
-        <TextField
-          label="Available Items *"
-          name="availableItems"
-          variant="outlined"
-          fullWidth
-          value={formData.availableItems}
-          onChange={handleInputChange}
-          error={!!errors.availableItems}
-          helperText={errors.availableItems}
-          margin="normal"
-        />
-        <TextField
-          label="Price *"
-          name="price"
-          variant="outlined"
-          fullWidth
-          value={formData.price}
-          onChange={handleInputChange}
-          error={!!errors.price}
-          helperText={errors.price}
-          margin="normal"
-        />
-        <TextField
-          label="Image URL"
-          name="imageUrl"
-          variant="outlined"
-          fullWidth
-          value={formData.imageUrl}
-          onChange={handleInputChange}
-          margin="normal"
-        />
-        <TextField
-          label="Product Description"
-          name="description"
-          variant="outlined"
-          fullWidth
-          value={formData.description}
-          onChange={handleInputChange}
-          margin="normal"
-        />
-        <Button variant="contained" color="primary" type="submit" fullWidth style={{ marginTop: '1rem' }}>
-          Add Product
-        </Button>
-      </form>
-    </Box>
+    <>
+      <ToastContainer />
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="100%" maxWidth="500px" margin="auto" marginTop="2rem">
+        <Typography variant="h4" marginBottom="2rem">Add Product</Typography>
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <TextField
+            label="Name *"
+            name="name"
+            variant="outlined"
+            fullWidth
+            value={formData.name}
+            onChange={handleInputChange}
+            error={!!errors.name}
+            helperText={errors.name}
+            margin="normal"
+          />
+          <CreatableSelect
+            isClearable
+            options={categories}
+            onChange={handleCategoryChange}
+            placeholder="Category *"
+            value={categories.find(option => option.value === formData.category)}
+            styles={{
+              control: (base) => ({
+                ...base,
+                marginTop: '16px',
+                marginBottom: '8px',
+              }),
+            }}
+          />
+          {errors.category && <Typography color="error" variant="body2">{errors.category}</Typography>}
+          <TextField
+            label="Manufacturer *"
+            name="manufacturer"
+            variant="outlined"
+            fullWidth
+            value={formData.manufacturer}
+            onChange={handleInputChange}
+            error={!!errors.manufacturer}
+            helperText={errors.manufacturer}
+            margin="normal"
+          />
+          <TextField
+            label="Available Items *"
+            name="availableItems"
+            variant="outlined"
+            fullWidth
+            value={formData.availableItems}
+            onChange={handleInputChange}
+            error={!!errors.availableItems}
+            helperText={errors.availableItems}
+            margin="normal"
+          />
+          <TextField
+            label="Price *"
+            name="price"
+            variant="outlined"
+            fullWidth
+            value={formData.price}
+            onChange={handleInputChange}
+            error={!!errors.price}
+            helperText={errors.price}
+            margin="normal"
+          />
+          <TextField
+            label="Image URL"
+            name="imageUrl"
+            variant="outlined"
+            fullWidth
+            value={formData.imageUrl}
+            onChange={handleInputChange}
+            margin="normal"
+          />
+          <TextField
+            label="Product Description"
+            name="description"
+            variant="outlined"
+            fullWidth
+            value={formData.description}
+            onChange={handleInputChange}
+            margin="normal"
+          />
+          <Button variant="contained" color="primary" type="submit" fullWidth style={{ marginTop: '1rem' }}>
+            Add Product
+          </Button>
+        </form>
+      </Box>
+    </>
   );
 };
 
