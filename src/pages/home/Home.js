@@ -1,8 +1,13 @@
+import useAuth from 'hooks/useAuth'
 import React from 'react'
 
 function Home() {
+    const { auth } = useAuth()
+
     return (
-        <div>Home</div>
+        <>
+            <h1>Welcome to the Home Page</h1>
+        </>
     )
 }
 

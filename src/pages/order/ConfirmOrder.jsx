@@ -60,8 +60,8 @@ const ConfirmOrder = ({ address, order }) => {
             </Box>
         </Box>
         <div style={{display:"flex",gap:"10px",justifyContent:"center"}}>
-            <a style={{padding:"7px",borderRadius:"6px"}}> Back</a>
-            <a style={{background:"blue",color:"white",padding:"7px",borderRadius:"6px"}}> PLACE ORDER</a>
+            <a style={{padding:"7px"}}> Back</a>
+            <a style={{background:"blue",color:"white",padding:"7px"}}> PLACE ORDER</a>
         </div>
         </div>
     )
