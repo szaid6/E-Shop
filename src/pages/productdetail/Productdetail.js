@@ -34,15 +34,15 @@ const Productdetail = () => {
     };
 
     const handlePlaceOrder = () => {
-        navigate(`/order/${productId}`);
+        navigate(`/order/${quantity}/${productId}`);
 
     };
 
     return (
         <div className="page">
-            <div className="product-card">
+            <div className="product-card" style={{maxWidth: '1500px'}} >
                 <img
-                    src={product?.image || 'https://via.placeholder.com/150'}
+                    src={product?.imageUrl || 'https://via.placeholder.com/150'}
                     alt={product?.name}
                     className="product-image"
                 />

@@ -34,7 +34,7 @@ const ProductCard = ({ data, onDelete, onEdit }) => {
                 <CardMedia
                     component="img"
                     height="200"
-                    image={data?.image || 'https://via.placeholder.com/150'}
+                    image={data?.imageUrl || 'https://via.placeholder.com/150'}
                     alt={data.name}
                 />
                 <CardContent>
@@ -57,7 +57,7 @@ const ProductCard = ({ data, onDelete, onEdit }) => {
                 </CardContent>
             </CardActionArea>
             <CardActions sx={{ justifyContent: 'space-between' }}>
-                <Button variant='contained' size="small" color="primary"
+                <Button variant='contained' size="small" style={{ backgroundColor: '#3f51b5' }}
                     onClick={() => moveToDetailPage(data.id)}
                 >
                     Buy
@@ -93,7 +93,7 @@ const ProductCard = ({ data, onDelete, onEdit }) => {
                     <Button onClick={handleClose} variant="outlined" color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={() => onDelete(data.id)} variant="contained" color="primary" autoFocus>
+                    <Button onClick={() => onDelete(data.id)} variant="contained" style={{ backgroundColor: '#3f51b5' }} autoFocus>
                         OK
                     </Button>
                 </DialogActions>

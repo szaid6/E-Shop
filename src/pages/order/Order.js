@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Stepper, Step, StepLabel, Button, Typography, Box, TextField } from '@mui/material';
 import Select from '@mui/material/Select';
-import axios,{ PrivateComponent } from 'api/axios';
+import axios, { PrivateComponent } from 'api/axios';
 import MenuItem from '@mui/material/MenuItem';
 import useAuth from 'hooks/useAuth';
 import ConfirmOrder from './ConfirmOrder'
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 const steps = ['Items', 'Select Address', 'Confirm Order'];
 
 
 
 const Order = () => {
-  const { productId } = useParams();
- 
+  const { productId, quantity } = useParams();
+  const navigate = useNavigate()
+
   const privateAxios = PrivateComponent();
   const { auth } = useAuth();
   const [activeStep, setActiveStep] = useState(1);
@@ -28,9 +30,14 @@ const Order = () => {
   });
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // mark the step as completed
-    setCompleted(new Set([...completed, activeStep]));
+
+    if (selectedAddress === "-1") {
+      toast.error("Please select address")
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      // mark the step as completed
+      setCompleted(new Set([...completed, activeStep]));
+    }
   };
 
   const handleBack = () => {
@@ -134,7 +141,7 @@ const Order = () => {
   };
 
   const [selectedAddressDetails, setSelectedAddressDetails] = useState({})
-  const [product,setProduct]=useState({});
+  const [product, setProduct] = useState({});
   const [selectedAddress, setSelectedAddress] = useState("-1")
   const [address, setAddress] = useState([]);
 
@@ -152,13 +159,13 @@ const Order = () => {
   const getProductDetails = async () => {
     // Call API to get product details using axios
     try {
-        const response = await axios.get(`/products/${productId}`);
-        
-        setProduct(response.data);
+      const response = await axios.get(`/products/${productId}`);
+
+      setProduct(response.data);
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
-}
+  }
 
   useEffect(() => {
     getAddresses();
@@ -172,153 +179,173 @@ const Order = () => {
 
 
 
+  const handlePlaceOrder = async () => {
+    try {
+      const payload = {
+        user: auth.userId,
+        product: productId,
+        address: selectedAddress,
+        quantity: quantity
+      }
+      const res = await privateAxios.post("/orders", payload)
+      alert("Product Order Successfully")
+      navigate("/products", { replace: true })
+    } catch (error) {
+      alert("error placing Order")
+    }
+  }
+
   return (
-    <Box display={'flex'} flexDirection={'row'} justifyContent={'center'} width={'100%'} bgcolor={'#fafafa'} height={'100%'} >
-      <Box sx={{ width: '70%' }} marginTop={'3rem'} >
-        <Stepper activeStep={activeStep} style={{ backgroundColor: '#fff', padding: '1.5rem' }}>
-          {steps.map((label, index) => (
-            <Step key={label} completed={completed.has(index)} >
-              <StepLabel >{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <div>
+    <>
+      <ToastContainer />
+      <Box display={'flex'} flexDirection={'row'} justifyContent={'center'} width={'100%'} bgcolor={'#fafafa'} height={'100%'} >
+        <Box sx={{ width: '70%' }} marginTop={'3rem'} >
+          <Stepper activeStep={activeStep} style={{ backgroundColor: '#fff', padding: '1.5rem' }}>
+            {steps.map((label, index) => (
+              <Step key={label} completed={completed.has(index)} >
+                <StepLabel >{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
           <div>
-            {activeStep === 1 && (
-              <Box display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'} >
-                <div style={{ width: '500px', marginTop: '1rem' }}>
-                  <label>Select Address</label>
-                  <Select
-                    // options={[{ value: 0, label: "Select An Adress" }, ...address].map((address) => ({ value: address.id, label: address.address }))}
-                    placeholder="Select..."
-                    onChange={(e) => setSelectedAddress(e.target.value)}
-                    value={selectedAddress}
-                    style={{ width: "100%" }}
-                  >
-                    <MenuItem value="-1">Select An Address</MenuItem>
-                    {
-                      address.map((add) => {
-                        return (
-                          <MenuItem value={add.id}>{add.name},{add.street},{add.landmark},{add.city},{add.state},{add.zipcode}</MenuItem>
-                        )
-                      })
-                    }
+            <div>
+              {activeStep === 1 && (
+                <Box display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'} >
+                  <div style={{ width: '500px', marginTop: '1rem' }}>
+                    <label>Select Address</label>
+                    <Select
+                      // options={[{ value: 0, label: "Select An Adress" }, ...address].map((address) => ({ value: address.id, label: address.address }))}
+                      placeholder="Select..."
+                      onChange={(e) => setSelectedAddress(e.target.value)}
+                      value={selectedAddress}
+                      style={{ width: "100%" }}
+                    >
+                      <MenuItem value="-1">Select An Address</MenuItem>
+                      {
+                        address.map((add) => {
+                          return (
+                            <MenuItem value={add.id}>{add.name},{add.street},{add.landmark},{add.city},{add.state},{add.zipcode}</MenuItem>
+                          )
+                        })
+                      }
 
-                  </Select>
-                </div>
+                    </Select>
+                  </div>
 
-                <Typography variant="h6" align="center" marginTop={'1rem'}>
-                  -OR-
-                </Typography>
-                <Typography variant="h6" align="center" marginTop={'1.5rem'}>
-                  Add Address
-                </Typography>
+                  <Typography variant="h6" align="center" marginTop={'1rem'}>
+                    -OR-
+                  </Typography>
+                  <Typography variant="h6" align="center" marginTop={'1.5rem'}>
+                    Add Address
+                  </Typography>
 
-                {/* add address fields */}
-                <Box display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'} width={'100%'} maxWidth={'500px'} marginTop={'1rem'}>
-                  <TextField
-                    label="Name *"
-                    variant="outlined"
-                    fullWidth
-                    value={formData.name.value}
-                    onChange={(event) => handleFieldChange('name', event.target.value)}
-                    error={formData.name.error}
-                    helperText={formData.name.error && formData.name.errorMessage}
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Contact Number *"
-                    variant="outlined"
-                    fullWidth
-                    value={formData.contactNumber.value}
-                    onChange={(event) => handleFieldChange('contactNumber', event.target.value)}
-                    error={formData.contactNumber.error}
-                    helperText={formData.contactNumber.error && formData.contactNumber.errorMessage}
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Street *"
-                    variant="outlined"
-                    fullWidth
-                    value={formData.street.value}
-                    onChange={(event) => handleFieldChange('street', event.target.value)}
-                    error={formData.street.error}
-                    helperText={formData.street.error && formData.street.errorMessage}
-                    margin="normal"
-                  />
-                  <TextField
-                    label="City *"
-                    variant="outlined"
-                    fullWidth
-                    value={formData.city.value}
-                    onChange={(event) => handleFieldChange('city', event.target.value)}
-                    error={formData.city.error}
-                    helperText={formData.city.error && formData.city.errorMessage}
-                    margin="normal"
-                  />
-                  <TextField
-                    label="State *"
-                    variant="outlined"
-                    fullWidth
-                    value={formData.state.value}
-                    onChange={(event) => handleFieldChange('state', event.target.value)}
-                    error={formData.state.error}
-                    helperText={formData.state.error && formData.state.errorMessage}
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Landmark *"
-                    variant="outlined"
-                    fullWidth
-                    value={formData.landmark.value}
-                    onChange={(event) => handleFieldChange('landmark', event.target.value)}
-                    error={formData.landmark.error}
-                    helperText={formData.landmark.error && formData.landmark.errorMessage}
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Zip Code *"
-                    variant="outlined"
-                    fullWidth
-                    value={formData.zipCode.value}
-                    onChange={(event) => handleFieldChange('zipCode', event.target.value)}
-                    error={formData.zipCode.error}
-                    helperText={formData.zipCode.error && formData.zipCode.errorMessage}
-                    margin="normal"
-                  />
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    onClick={handleSaveAddress}
-                    style={{ marginTop: '1rem', backgroundColor: '#3f51b5' }}
-                    disabled={selectedAddress === "-1" ? false : true}
-                  >
-                    Save Address
-                  </Button>
+                  {/* add address fields */}
+                  <Box display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'} width={'100%'} maxWidth={'500px'} marginTop={'1rem'}>
+                    <TextField
+                      label="Name *"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.name.value}
+                      onChange={(event) => handleFieldChange('name', event.target.value)}
+                      error={formData.name.error}
+                      helperText={formData.name.error && formData.name.errorMessage}
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Contact Number *"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.contactNumber.value}
+                      onChange={(event) => handleFieldChange('contactNumber', event.target.value)}
+                      error={formData.contactNumber.error}
+                      helperText={formData.contactNumber.error && formData.contactNumber.errorMessage}
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Street *"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.street.value}
+                      onChange={(event) => handleFieldChange('street', event.target.value)}
+                      error={formData.street.error}
+                      helperText={formData.street.error && formData.street.errorMessage}
+                      margin="normal"
+                    />
+                    <TextField
+                      label="City *"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.city.value}
+                      onChange={(event) => handleFieldChange('city', event.target.value)}
+                      error={formData.city.error}
+                      helperText={formData.city.error && formData.city.errorMessage}
+                      margin="normal"
+                    />
+                    <TextField
+                      label="State *"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.state.value}
+                      onChange={(event) => handleFieldChange('state', event.target.value)}
+                      error={formData.state.error}
+                      helperText={formData.state.error && formData.state.errorMessage}
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Landmark *"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.landmark.value}
+                      onChange={(event) => handleFieldChange('landmark', event.target.value)}
+                      error={formData.landmark.error}
+                      helperText={formData.landmark.error && formData.landmark.errorMessage}
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Zip Code *"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.zipCode.value}
+                      onChange={(event) => handleFieldChange('zipCode', event.target.value)}
+                      error={formData.zipCode.error}
+                      helperText={formData.zipCode.error && formData.zipCode.errorMessage}
+                      margin="normal"
+                    />
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={handleSaveAddress}
+                      style={{ marginTop: '1rem', backgroundColor: '#3f51b5' }}
+                      disabled={selectedAddress === "-1" ? false : true}
+                    >
+                      Save Address
+                    </Button>
+                  </Box>
                 </Box>
+              )}
+              {activeStep === 2 && (
+                <ConfirmOrder address={selectedAddressDetails} order={product} quantity={quantity} placeOrder={handlePlaceOrder} />
+              )}
+
+              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, marginX: "auto", justifyContent: "center" }} maxWidth={'500px'}>
+                <Button
+                  color="inherit"
+                  disabled={activeStep === 1}
+                  onClick={handleBack}
+                  sx={{ mr: 1 }}
+                >
+                  Back
+                </Button>
+
+                <Button variant='contained' style={{ backgroundColor: '#3f51b5', color: '#fff' }} onClick={() => activeStep === steps.length - 1 ? handlePlaceOrder() : handleNext()}>
+                  {activeStep === steps.length - 1 ? 'Place Order' : 'Next'}
+                </Button>
               </Box>
-            )}
-            {activeStep === 2 && (
-              <ConfirmOrder address={selectedAddressDetails} order={product} />
-            )}
-            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 1}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Box sx={{ flex: '1 1 auto' }} />
-              <Button onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Place Order' : 'Next'}
-              </Button>
-            </Box>
+            </div>
           </div>
-        </div>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

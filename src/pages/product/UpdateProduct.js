@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import CreatableSelect from 'react-select/creatable';
-import axios from 'api/axios';
+import axios, { PrivateComponent } from 'api/axios';
 import { useParams } from 'react-router-dom';
 
 const UpdateProduct = () => {
@@ -18,6 +18,7 @@ const UpdateProduct = () => {
 
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
+  const privateAxios = PrivateComponent();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -73,7 +74,7 @@ const UpdateProduct = () => {
     if (!validateForm()) return;
 
     try {
-      await axios.put(`/products/${productId}`, formData);
+      await privateAxios.put(`/products/${productId}`, formData);
       alert('Product updated successfully');
     } catch (error) {
       console.error('Error updating product:', error);

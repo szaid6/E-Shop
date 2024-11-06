@@ -27,12 +27,13 @@ function App() {
           <Route path='/productdetail/:productId' element={<Productdetail />} />
         </Route>
         <Route element={<RequireAuth />}>
-          <Route path='/order/:productId' element={<Order />} />
-          <Route element={<RequireAdmin allowedRoles={["ADMIN"]} />}>
-            <Route path='/add-product' element={<AddProduct />} />
-            <Route path='/update-product/:productId' element={<UpdateProduct />} />
+          <Route element={<Layout />} >
+            <Route path='/order/:quantity/:productId' element={<Order />} />
+            <Route element={<RequireAdmin allowedRoles={["ADMIN"]} />}>
+              <Route path='/add-product' element={<AddProduct />} />
+              <Route path='/update-product/:productId' element={<UpdateProduct />} />
+            </Route>
           </Route>
-
         </Route>
 
       </Routes>
