@@ -155,14 +155,18 @@ const Product = () => {
                 ))}
             </ToggleButtonGroup>
 
-            <div style={{ width: '200px', marginLeft: '5rem', marginTop: '2rem' }}>
-                <label>Sort by:</label>
-                <Select
-                    options={options}
-                    placeholder="Select..."
-                    onChange={handleSorting}
-                    value={options.find((option) => option.value === selectedSort)}
-                />
+            <div style={{display:"flex",maxWidth:"1400px",marginRight:"auto",marginLeft:"auto",padding:"20px"}}>
+
+
+                <div style={{ width: '200px', marginTop: '2rem' }}>
+                    <label>Sort by:</label>
+                    <Select
+                        options={options}
+                        placeholder="Select..."
+                        onChange={handleSorting}
+                        value={options.find((option) => option.value === selectedSort)}
+                    />
+                </div>
             </div>
 
             <div className="productContainer">
