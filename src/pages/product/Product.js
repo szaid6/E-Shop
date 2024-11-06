@@ -6,6 +6,11 @@ import axios from 'api/axios';
 import ProductCard from 'components/productcard/ProductCard';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
+import { PrivateComponent } from 'api/axios';
+import useAuth from 'hooks/useAuth';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Bounce } from 'react-toastify';
 
 const Product = () => {
     const [categories, setCategories] = useState([]);
@@ -14,6 +19,8 @@ const Product = () => {
     const [filteredData, setFilteredData] = useState([]);
     const [selectedSort, setSelectedSort] = useState('default');
     const navigate = useNavigate();
+    const { auth } = useAuth();
+    const privateAxios = PrivateComponent();
 
     // Fetch categories from the API
     const getCategories = async () => {
@@ -88,7 +95,43 @@ const Product = () => {
         setFilteredData(sortedData);
     };
 
-    
+    const handleEdit = (productId) => {
+        navigate(`/update-product/${productId}`, { replace: false });
+    }
+
+    const handleDelete = async (productId) => {
+        try {
+            await privateAxios.delete(`/products/${productId}`);
+            const updatedProducts = products.filter(product => product.id !== productId);
+            setProducts(updatedProducts);
+            setFilteredData(updatedProducts);
+            toast.success("Product deleted successfully", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            toast.error("Error deleting product", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
+        }
+    }
+
     const options = [
         { value: 'default', label: 'Default' },
         { value: 'highToLow', label: 'Price: High to Low' },
@@ -124,10 +167,10 @@ const Product = () => {
 
             <div className="productContainer">
                 {filteredData.map((product, index) => (
-                    <ProductCard data={product} key={index}  />
+                    <ProductCard data={product} key={index} onDelete={handleDelete} onEdit={handleEdit} />
                 ))}
             </div>
-
+            <ToastContainer />
         </div>
     );
 };

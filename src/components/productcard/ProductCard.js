@@ -9,31 +9,15 @@ import CardActions from '@mui/material/CardActions';
 import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { PrivateComponent } from 'api/axios';
 import useAuth from 'hooks/useAuth';
 
-const ProductCard = ({ data }) => {
+const ProductCard = ({ data, onDelete, onEdit }) => {
     const navigate = useNavigate();
     const { auth } = useAuth();
-    const privateAxios = PrivateComponent();
     const [open, setOpen] = useState(false);
 
     const moveToDetailPage = (productId) => {
         navigate(`/productdetail/${productId}`, { replace: false });
-    }
-
-    const handleEdit = (productId) => {
-        navigate(`/update-product/${productId}`, { replace: false });
-    }
-
-    const handleDelete = async (productId) => {
-        try {
-            await privateAxios.delete(`/products/${productId}`);
-            window.location.reload();
-            setOpen(false);
-        } catch (error) {
-            console.error('Error deleting product:', error);
-        }
     }
 
     const handleClickOpen = () => {
@@ -81,7 +65,7 @@ const ProductCard = ({ data }) => {
                 {
                     auth.isAdmin &&
                     <Box display="flex" gap={'12px'} justifyContent="space-between" alignItems="center">
-                        <span onClick={() => handleEdit(data.id)}>
+                        <span onClick={() => onEdit(data.id)}>
                             <Edit sx={{ color: '#757575' }} />
                         </span>
                         <span onClick={handleClickOpen}>
@@ -109,7 +93,7 @@ const ProductCard = ({ data }) => {
                     <Button onClick={handleClose} variant="outlined" color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={() => handleDelete(data.id)} variant="contained" color="primary" autoFocus>
+                    <Button onClick={() => onDelete(data.id)} variant="contained" color="primary" autoFocus>
                         OK
                     </Button>
                 </DialogActions>
