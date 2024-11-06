@@ -11,14 +11,13 @@ import Backdrop from "@mui/material/Backdrop";
 import { useState, useEffect } from "react";
 import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import axios from 'api/axios';
-import { setLogin } from 'state/AppState';
+import { setAdminStatus, setLogin } from 'state/AppState';
 import { useDispatch } from 'react-redux';
 import { Token } from '@mui/icons-material';
 import Navbar from 'components/navbarauth/Navbar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Bounce } from 'react-toastify';
-
 
 const Signin = () => {
 
@@ -44,6 +43,7 @@ const Signin = () => {
   const { from } = (location && location.state) || { from: { pathname: "/" } };
   const [loggedInUser, setLoggedInUser] = useState(null);
 
+
   // useEffect(() => {
   //   if (loggedInUser) {
   //     history(from, { replace: true });
@@ -55,9 +55,35 @@ const Signin = () => {
     // Call API to login using axios
     try {
       const response = await axios.post("/auth/signin", data);
-      dispatch(setLogin({ token: response.data.token, email: data.email }));
-      history("/", { replace: true });
-      console.log('ravi changed priorities');
+
+      // send token in header
+      try {
+        await axios.get("/users", {
+          headers: {
+            Authorization: `Bearer ${response.data.token}`
+          }
+        });
+        dispatch(setLogin({ token: response.data.token, email: data.email, isAdmin: true }));
+
+      } catch (error) {
+        console.error(error);
+        dispatch(setLogin({ token: response.data.token, email: data.email, isAdmin: false }));
+      }
+
+      toast.success("Login successful", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      history("/products", { replace: true });
+
     } catch (error) {
       if (error.status === 401) {
         toast.error("Invalid username or password", {

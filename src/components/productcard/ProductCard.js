@@ -9,10 +9,13 @@ import CardActions from '@mui/material/CardActions';
 import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'api/axios';
+import { PrivateComponent } from 'api/axios';
+import useAuth from 'hooks/useAuth';
 
 const ProductCard = ({ data }) => {
     const navigate = useNavigate();
+    const { auth } = useAuth();
+    const privateAxios = PrivateComponent();
     const [open, setOpen] = useState(false);
 
     const moveToDetailPage = (productId) => {
@@ -25,8 +28,8 @@ const ProductCard = ({ data }) => {
 
     const handleDelete = async (productId) => {
         try {
-            await axios.delete(`/products/${productId}`);
-            alert('Product deleted successfully');
+            await privateAxios.delete(`/products/${productId}`);
+            window.location.reload();
             setOpen(false);
         } catch (error) {
             console.error('Error deleting product:', error);
@@ -75,14 +78,18 @@ const ProductCard = ({ data }) => {
                 >
                     Buy
                 </Button>
-                <Box display="flex" gap={'12px'} justifyContent="space-between" alignItems="center">
-                    <span onClick={() => handleEdit(data.id)}>
-                        <Edit sx={{ color: '#757575' }} />
-                    </span>
-                    <span onClick={handleClickOpen}>
-                        <Delete sx={{ color: '#757575' }} />
-                    </span>
-                </Box>
+                {
+                    auth.isAdmin &&
+                    <Box display="flex" gap={'12px'} justifyContent="space-between" alignItems="center">
+                        <span onClick={() => handleEdit(data.id)}>
+                            <Edit sx={{ color: '#757575' }} />
+                        </span>
+                        <span onClick={handleClickOpen}>
+                            <Delete sx={{ color: '#757575' }} />
+                        </span>
+                    </Box>
+
+                }
             </CardActions>
             <Dialog
                 open={open}

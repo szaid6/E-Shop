@@ -7,9 +7,10 @@ const useAuth = () => {
     const auth = {
         email: useSelector((state) => state.appData.email),
         token: useSelector((state) => state.appData.token),
+        isAdmin: useSelector((state) => state.appData.isAdmin)
     }
 
-    return { setLogin, setLogout, auth }
+    return { setLogin, setLogout, auth };
 }
 
 export default useAuth;

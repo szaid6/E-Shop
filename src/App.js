@@ -1,4 +1,4 @@
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import './App.css';
 
 import Layout from './components/layouts/Layout';
@@ -11,6 +11,7 @@ import Productdetail from 'pages/productdetail/Productdetail';
 import Order from 'pages/order/Order';
 import AddProduct from './pages/product/AddProduct';
 import UpdateProduct from './pages/product/UpdateProduct';
+import RequireAdmin from 'middleware/RequireRole';
 
 function App() {
   return (
@@ -24,16 +25,13 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/products' element={<Product />} />
           <Route path='/productdetail/:productId' element={<Productdetail />} />
-          <Route path='/order' element={<Order />} />
-          <Route path='/add-product' element={<AddProduct />} />
-          <Route path='/update-product/:productId' element={<UpdateProduct />} />
-
         </Route>
         <Route element={<RequireAuth />}>
-
-          {/* <Route element={<RequireRole allowedRoles={["ADMIN"]} />}>
-            <Route path='/' element={<Navigate to="/admin" replace={true} />} />
-          </Route> */}
+          <Route path='/order' element={<Order />} />
+          <Route element={<RequireAdmin allowedRoles={["ADMIN"]} />}>
+            <Route path='/add-product' element={<AddProduct />} />
+            <Route path='/update-product/:productId' element={<UpdateProduct />} />
+          </Route>
 
         </Route>
 

@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import { useDispatch } from 'react-redux';
-import { setLogout } from 'state/AppState';
+import { setAdminStatus, setLogout } from 'state/AppState';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
@@ -59,6 +59,9 @@ function Navbar() {
     const dispatch = useDispatch();
     const { auth } = useAuth()
     const navigate = useNavigate();
+
+    // console.log(JSON.stringify(setAdminStatus));
+
 
     const handleLogin = () => {
         navigate('/login');
@@ -114,7 +117,7 @@ function Navbar() {
                         >Home</Link>
                         {/* Add Product Link */}
                         {
-                            auth.token &&
+                            auth.isAdmin &&
                             <Link
                                 to='/add-product'
                                 style={{ textDecoration: 'underline', color: 'white', fontSize: '1rem' }}
