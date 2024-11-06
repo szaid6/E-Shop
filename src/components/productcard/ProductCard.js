@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -6,18 +6,40 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardActions from '@mui/material/CardActions';
-import { Box } from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
-import { move } from 'formik';
-import { Navigate, useHistory, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'api/axios';
 
 const ProductCard = ({ data }) => {
     const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+
     const moveToDetailPage = (productId) => {
-        // navigate to product detail page with the product id
         navigate(`/productdetail/${productId}`, { replace: false });
     }
 
+    const handleEdit = (productId) => {
+        navigate(`/update-product/${productId}`, { replace: false });
+    }
+
+    const handleDelete = async (productId) => {
+        try {
+            await axios.delete(`/products/${productId}`);
+            alert('Product deleted successfully');
+            setOpen(false);
+        } catch (error) {
+            console.error('Error deleting product:', error);
+        }
+    }
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
         <Card sx={{ width: 300, marginBottom: '1rem' }}>
@@ -34,7 +56,7 @@ const ProductCard = ({ data }) => {
                             overflow: 'hidden',
                             whiteSpace: 'nowrap',
                             textOverflow: 'ellipsis',
-                            maxWidth: '70%' // Adjust this as needed
+                            maxWidth: '70%'
                         }}>
                             {data.name}
                         </Typography>
@@ -54,20 +76,37 @@ const ProductCard = ({ data }) => {
                     Buy
                 </Button>
                 <Box display="flex" gap={'12px'} justifyContent="space-between" alignItems="center">
-                    {/* Edit */}
-                    <span>
-                        <Edit
-                            sx={{ color: '#757575' }}
-                        />
+                    <span onClick={() => handleEdit(data.id)}>
+                        <Edit sx={{ color: '#757575' }} />
                     </span>
-                    {/* delete */}
-                    <span>
-                        <Delete
-                            sx={{ color: '#757575' }}
-                        />
+                    <span onClick={handleClickOpen}>
+                        <Delete sx={{ color: '#757575' }} />
                     </span>
                 </Box>
             </CardActions>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Confirm Deletion of product!"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Are you sure you want to delete the product?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} variant="outlined" color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={() => handleDelete(data.id)} variant="contained" color="primary" autoFocus>
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Card>
     );
 };
