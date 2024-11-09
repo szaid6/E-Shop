@@ -40,27 +40,13 @@ const Signin = () => {
   const [busy, setBusy] = useState(false);
   const history = useNavigate();
   const location = useLocation();
-  const { from } = (location && location.state) || { from: { pathname: "/" } };
-  const [loggedInUser, setLoggedInUser] = useState(null);
 
   let submitForm = async (data) => {
     // Call API to login using axios
     try {
       const response = await axios.post("/auth/signin", data);
-
-      // send token in header
-      try {
-        await axios.get("/users", {
-          headers: {
-            Authorization: `Bearer ${response.data.token}`
-          }
-        });
-        dispatch(setLogin({ token: response.data.token, email: data.username, isAdmin: true,userId:response.data.id  }));
-
-      } catch (error) {
-        console.error(error);
-        dispatch(setLogin({ token: response.data.token, email: data.username, isAdmin: false,userId:response.data.id }));
-      }
+      console.log(response);
+      dispatch(setLogin({ email: response.data.email, isAdmin: response.data.roles.includes("ADMIN") ? true : false, userId: response.data.id }));
 
       toast.success("Login successful", {
         position: "top-right",

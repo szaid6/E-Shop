@@ -98,6 +98,7 @@ function Navbar() {
                     </Box>
 
                     {/* Search Section */}
+                    {/* Incomplete becoz api is not provided */}
                     <Search>
                         <SearchIconWrapper>
                             <SearchIcon />
@@ -125,7 +126,7 @@ function Navbar() {
                         }
                         {/*contained login button */}
                         {
-                            auth.token ?
+                            auth.email ?
                                 <Button variant='contained' color='error' onClick={handleLogout}>LOGOUT</Button>
                                 :
                                 <Button variant='contained' color='error' onClick={handleLogin}>LOGIN</Button>

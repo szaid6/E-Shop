@@ -11,21 +11,23 @@ const RequireAuth = () => {
     const dispatch = useDispatch();
 
 
-    if (!auth || !auth.token) {
+    if (!auth) {
         return <Navigate to="/login" state={{ from: location }} replace />;
-    }
-
-    const payloadToken = jwtDecode(auth.token);
-    const isTokenExpired = Date.now() >= payloadToken.exp * 1000;
-
-    if (!isTokenExpired) {
-
-        return <Outlet />;
-
     } else {
-        dispatch(setLogout());
-        return <Navigate to="/login" state={{ from: location }} replace />;
+        return <Outlet />;
     }
+
+    // const payloadToken = jwtDecode(auth.token);
+    // const isTokenExpired = Date.now() >= payloadToken.exp * 1000;
+
+    // if (!isTokenExpired) {
+
+    //     return <Outlet />;
+
+    // } else {
+    // dispatch(setLogout());
+    // return <Navigate to="/login" state={{ from: location }} replace />;
+    // }
 };
 
 export default RequireAuth;

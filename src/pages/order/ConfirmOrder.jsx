@@ -22,7 +22,7 @@ const ConfirmOrder = ({ address, order, quantity, placeOrder }) => {
                         Category: {order.description}
                     </p>
                     <h3 style={{ color: "red" }}>
-                        Total Price <span>$ {order.price * quantity}</span>
+                        Total Price <span>₹ {order.price * quantity}</span>
                     </h3>
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", padding: "10px" }} >

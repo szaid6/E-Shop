@@ -82,6 +82,8 @@ const Signup = () => {
         navigate('/login');
       } catch (error) {
         // Toastify error message
+        console.log(error);
+        
         toast.error(error.response.data.message, {
           position: "top-right",
           autoClose: 5000,
@@ -102,7 +104,7 @@ const Signup = () => {
 
   return (
     <>
-      <ToastContainer/>
+      <ToastContainer />
       <Navbar />
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={1}>
